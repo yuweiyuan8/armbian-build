@@ -28,7 +28,7 @@
  /delete-node/ &xbl_aop_mem;
  
  / {
-	model = "Redmi k30 pro (lmi)";
+	model = "Xiaomi Redmi k30 pro (lmi)";
 	compatible = "xiaomi,lmi", "qcom,kona", "qcom,sm8250";
 	chassis-type = "handset";
  
@@ -46,7 +46,7 @@
  
 		framebuffer: framebuffer@9c000000 {
 			compatible = "simple-framebuffer";
-			reg = <0x0 0x9c000000 0x0 0x2300000>;
+			reg = <0 0x9c000000 0 (1080 * 2400 * 4)>;
 			width = <1080>;
 			height = <2340>;
 			stride = <(1080 * 4)>;
@@ -177,7 +177,7 @@
 		};
  
 		cont_splash_mem: cont-splash@9c000000 {
-			reg = <0x0 0x9c000000 0x0 0x2300000>;
+			reg = <0x0 0x9c000000 0x0 (1080 * 2400 * 4)>;
 			no-map;
 		};
 	};
