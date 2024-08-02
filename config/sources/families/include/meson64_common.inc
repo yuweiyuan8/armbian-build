@@ -45,7 +45,7 @@ case $BRANCH in
 		declare -g KERNEL_MAJOR_MINOR="6.6"
 		;;
 	edge)
-		declare -g KERNEL_MAJOR_MINOR="6.7"
+		declare -g KERNEL_MAJOR_MINOR="6.10"
 		;;
 
 esac
@@ -53,7 +53,7 @@ esac
 # Use custom vendor driver for wireless rtl88x2cs
 # See https://github.com/armbian/build/pull/6227
 # @TODO Only use for BOARDFAMILY="jethub" devices?
-function armbian_kernel_config__enable_rtl88x2cs_driver() {
+function custom_kernel_config__enable_rtl88x2cs_driver() {
 	kernel_config_modifying_hashes+=("CONFIG_RTL8822CS=m")
 	if [[ -f .config ]]; then
 		display_alert "Enabling rtl88x2cs driver in kernel config" "armbian-kernel" "wrn"
@@ -287,7 +287,7 @@ family_tweaks_bsp() {
 				EndSection
 			EOF
 			;;
-		"odroidn2" | "odroidc4" | "khadas-vim2" | "odroidhc4" | "khadas-vim3" | "khadas-vim3l" | "radxa-zero" | "radxa-zero2" | "bananapi-m2s")
+		"jethubj200" | "odroidn2" | "odroidc4" | "khadas-vim2" | "odroidhc4" | "khadas-vim3" | "khadas-vim3l" | "radxa-zero" | "radxa-zero2" | "bananapi-m2s")
 			cat <<- EOF > "$destination"/etc/X11/xorg.conf
 				Section "Device"
 				    Identifier  "DRM Graphics Acclerated"
