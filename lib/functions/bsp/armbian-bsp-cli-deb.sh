@@ -106,6 +106,7 @@ function compile_armbian-bsp-cli() {
 		KERNEL_IMAGE_TYPE=$KERNEL_IMAGE_TYPE
 		FORCE_BOOTSCRIPT_UPDATE=$FORCE_BOOTSCRIPT_UPDATE
 		FORCE_UBOOT_UPDATE=$FORCE_UBOOT_UPDATE
+		OVERLAYDIR="$OVERLAYDIR"
 		VENDOR="$VENDOR"
 		VENDORDOCS="$VENDORDOCS"
 		VENDORURL="$VENDORURL"
@@ -210,12 +211,17 @@ function compile_armbian-bsp-cli() {
 
 	### preventing upgrading stable kernels beyond version if defined
 	# if freeze variable is removed, upgrade becomes possible again
-	if [[ "${BETA}" != "yes" && -n "${KERNEL_UPGRADE_FREEZE}" ]]; then
-		cat <<- EOF >> "${destination}"/etc/apt/preferences.d/frozen-armbian
-		Package: linux-*-${BRANCH}-${LINUXFAMILY}
-		Pin: version ${KERNEL_UPGRADE_FREEZE}
-		Pin-Priority: 999
-		EOF
+	if [[ "${BETA}" != "yes" ]]; then
+		for pin_variants in $(echo $KERNEL_UPGRADE_FREEZE | sed "s/,/ /g"); do
+		extracted_pins=(${pin_variants//@/ })
+			if [[ "${BRANCH}-${LINUXFAMILY}" == "${extracted_pins[0]}" ]]; then
+				cat <<- EOF >> "${destination}"/etc/apt/preferences.d/frozen-armbian
+				Package: linux-*-${extracted_pins[0]}
+				Pin: version ${extracted_pins[1]}
+				Pin-Priority: 999
+				EOF
+			fi
+		done
 	else
 		touch "${destination}"/etc/apt/preferences.d/frozen-armbian
 	fi
@@ -445,6 +451,9 @@ function board_side_bsp_cli_postinst_finish() {
 	fi
 	if [ ! -f "/etc/default/armbian-zram-config" ] && [ -f /etc/default/armbian-zram-config.dpkg-dist ]; then
 		mv /etc/default/armbian-zram-config.dpkg-dist /etc/default/armbian-zram-config
+	fi
+    if [ ! -f "/etc/default/armbian-firstrun" ]; then
+		mv /etc/default/armbian-firstrun.dpkg-dist /etc/default/armbian-firstrun
 	fi
 
 	if [ -L "/usr/lib/chromium-browser/master_preferences.dpkg-dist" ]; then
